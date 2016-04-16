@@ -50,9 +50,9 @@ public class MainJFrame extends JFrame {
 		// 获取屏幕大小
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation((screenSize.width - frame.getWidth()) / 2, (screenSize.height - frame.getHeight()) / 3);
-		if (Config.isBackgroundMonitorServer) {
-			BackgroundMonitorServer.getBackgroundMonitor().startServer();
-		}
+//		if (Config.isBackgroundMonitorServer) {
+//			BackgroundMonitorServer.getBackgroundMonitor().startServer();
+//		}
 	}
 
 	public static MainJFrame getMainJFrame() {
