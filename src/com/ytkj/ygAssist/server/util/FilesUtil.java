@@ -116,7 +116,7 @@ public class FilesUtil {
 		}
 	}
 
-	// 读取信息
+	// 读取商品名称信息
 	public static void readerGoodsInfoFile() {
 		try {
 			File file = FilesUtil.createFile("\\goodsInfo.log");

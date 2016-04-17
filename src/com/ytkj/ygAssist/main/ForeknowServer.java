@@ -23,6 +23,7 @@ public class ForeknowServer {
 				return;
 			}
 		} else {
+			CacheData.setGoodsTreeListCacheDate(goodsID);
 			foreknowInterface.setFrameText("setGoodsName", CacheData.getGoodsNameCacheDate(goodsID));
 		}
 		if (period != null) {

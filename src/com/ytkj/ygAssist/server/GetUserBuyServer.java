@@ -64,10 +64,6 @@ public class GetUserBuyServer {
 	 * 查询商品期数是否存在 goodsID商品id period期数
 	 */
 	public void GetGoodsPeriodInfo(String goodsID, String codePeriod, String codeID, boolean codeState) {
-		if (isSelect) {
-			System.out.println("正在查");
-			return;
-		}
 		this.goodsID = goodsID;
 		this.codePeriod = codePeriod;
 		this.codeID = codeID;
@@ -95,7 +91,12 @@ public class GetUserBuyServer {
 		String[] text = new String[] { goodsID, codePeriod, codeRNO == null ? "" : codeRNO,
 				userName == null ? "" : userName, "", "", "", codeID };
 		foreknowJInterface.setFrameListeningText(selectIndex, text);
-//		System.out.println("正在查" + goodsID + ":" + codePeriod + ":" + codeRNO);
+		// System.out.println("正在查" + goodsID + ":" + codePeriod + ":" +
+		// codeRNO);
+		if (isSelect) {
+			System.out.println("正在查");
+			return;
+		}
 		getCodeNum();
 	}
 
@@ -108,17 +109,17 @@ public class GetUserBuyServer {
 			userBuyListCount = getUserBuyListCount(content);
 			if (isFind) {
 				if (CacheData.getGoodsPriceCacheDate(goodsID) > 8000) {
-					new Timer().schedule(new TimerTask() {
-						@Override
-						public void run() {
-							new GetUserBuyServerBigGoods(new JFrameListeningInterface() {
-							}, "0").GetGoodsPeriodInfo(goodsID, codePeriod, codeID);
-						}
-					}, goodsKeyUserWeb == null ? 31000 : 10);
-					isFind = false;
-					foreknowJInterface.setFrameText("webError",
+//					new Timer().schedule(new TimerTask() {
+//						@Override
+//						public void run() {
+//							new GetUserBuyServerBigGoods(new JFrameListeningInterface() {
+//							}, "0").GetGoodsPeriodInfo(goodsID, codePeriod, codeID);
+//						}
+//					}, goodsKeyUserWeb == null ? 31000 : 10);
+//					isFind = false;
+					foreknowJInterface.setFrameText("isSelect",
 							goodsID + "___" + codePeriod + "___" + selectIndex + "___" + codeID);
-					return;
+//					return;
 				}
 				for (int i = 11; i < userBuyListCount; i += 10) {
 					getBarcodeInfo();
@@ -129,7 +130,7 @@ public class GetUserBuyServer {
 			}
 		} catch (Exception e) {
 			selectNum++;
-//			System.out.println("错误了" + selectNum);
+			// System.out.println("错误了" + selectNum);
 			if (selectNum < 10) {
 				index = 0;
 				if (CacheData.getSelectCacheDate(goodsID, codePeriod) == null) {
@@ -155,7 +156,7 @@ public class GetUserBuyServer {
 		if (CacheData.getSelectCacheDate(goodsID, codePeriod) == null) {
 			if (isFind) {
 				content = GetGoodsInfo.getUserBuyListEnd(codeID, FIdx, HttpClient);
-//				System.out.println("查询到"+content);
+				// System.out.println("查询到"+content);
 				formatData(content, FIdx);
 			}
 		} else {
@@ -298,7 +299,7 @@ public class GetUserBuyServer {
 					CacheData.removeUserBuyListCacheDate(codeID);
 					startThread.remove(codeID + selectType);
 				}
-//				 System.out.println("查到1了："+goodsID+":"+codePeriod+userName);
+				// System.out.println("查到1了："+goodsID+":"+codePeriod+userName);
 				HttpGetUtil.CloseHttpClient(HttpClient);
 				break;
 			}
@@ -332,8 +333,9 @@ public class GetUserBuyServer {
 					CacheData.removeUserBuyListCacheDate(codeID);
 					startThread.remove(codeID + selectType);
 				}
-//				System.out.println("查到ByCache了：" + goodsID + ":" + codePeriod + ":" + codeRNO + ":" + userName + ":"
-//						+ buyPosition);
+				// System.out.println("查到ByCache了：" + goodsID + ":" + codePeriod
+				// + ":" + codeRNO + ":" + userName + ":"
+				// + buyPosition);
 				HttpGetUtil.CloseHttpClient(HttpClient);
 				break;
 			}
@@ -345,7 +347,8 @@ public class GetUserBuyServer {
 	 * 获取中奖码
 	 */
 	private void getCodeRNO(String buyTime) {
-//		System.out.println("时间" + goodsID + ":" + codePeriod + ":" + buyTime);
+		// System.out.println("时间" + goodsID + ":" + codePeriod + ":" +
+		// buyTime);
 		new Thread(new Runnable() {
 			public void run() {
 				// while (CacheData.getSelectCodeRNOCacheDate(codeID) == null) {
@@ -364,7 +367,8 @@ public class GetUserBuyServer {
 										CacheData.getSelectCacheDate(goodsID, codePeriod));
 							}
 						}
-//						System.out.println("中奖码" + goodsID + ":" + codePeriod + ":" + codeRNO);
+						// System.out.println("中奖码" + goodsID + ":" + codePeriod
+						// + ":" + codeRNO);
 					} else {
 						try {
 							Thread.sleep(1000);
@@ -396,7 +400,7 @@ public class GetUserBuyServer {
 					userName = barcodernoInfo.get("userName");
 					goodsKeyUserWeb = barcodernoInfo.get("userWeb");
 				}
-//				 System.out.println("查询中奖码：" + codeRNO);
+				// System.out.println("查询中奖码：" + codeRNO);
 			} catch (Exception e) {
 			}
 			if (goodsKeyUserWeb != null) {

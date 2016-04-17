@@ -84,7 +84,7 @@ public class HintDialog extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				HintDialog.this.setVisible(false);
 				if (expiringType == yungouLogin) {
-					MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(6);
+					MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(5);
 				} else if (expiringType == loginError) {
 					UserLogin.startUserLogin();
 				}else if (expiringType == quitAssist) {

@@ -71,7 +71,7 @@ public class ExpiringHint extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				ExpiringHint.this.setVisible(false);
 				if (expiringType == 1) {
-					MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(7);
+					MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(6);
 				}
 			}
 		});

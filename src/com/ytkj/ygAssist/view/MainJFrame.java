@@ -19,6 +19,8 @@ import com.ytkj.ygAssist.tools.ViewTools;
 import com.ytkj.ygAssist.view.myView.BackgroundMonitor;
 import com.ytkj.ygAssist.view.myView.HintDialog;
 import com.ytkj.ygAssist.view.myView.ShowMyMenu;
+import com.ytkj.ygAssist.viewControl.IntelligentMonitoringControl;
+
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -50,9 +52,9 @@ public class MainJFrame extends JFrame {
 		// 获取屏幕大小
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation((screenSize.width - frame.getWidth()) / 2, (screenSize.height - frame.getHeight()) / 3);
-//		if (Config.isBackgroundMonitorServer) {
-//			BackgroundMonitorServer.getBackgroundMonitor().startServer();
-//		}
+		// if (Config.isBackgroundMonitorServer) {
+		// BackgroundMonitorServer.getBackgroundMonitor().startServer();
+		// }
 	}
 
 	public static MainJFrame getMainJFrame() {
@@ -99,15 +101,15 @@ public class MainJFrame extends JFrame {
 
 		RecommendGoods panel = new RecommendGoods();
 		tabbedPane.addTab("热门推荐", null, panel, null);
-		IntelligentMonitoring panel_7 = new IntelligentMonitoring();
+		IntelligentMonitoring panel_7 = new IntelligentMonitoringControl();
 		tabbedPane.addTab("智能监听", null, panel_7, null);
 		panel_7.setBorder(null);
 
 		JPanel panel_2 = new Foreknow();
 		tabbedPane.addTab("提前揭晓", null, panel_2, null);
 
-		TrendChart panel_1 = new TrendChart();
-		tabbedPane.addTab("走势分析", null, panel_1, null);
+//		TrendChart panel_1 = new TrendChart();
+//		tabbedPane.addTab("走势分析", null, panel_1, null);
 
 		NowWinning panel_3 = new NowWinning();
 		tabbedPane.addTab("马上开奖", null, panel_3, null);
@@ -133,7 +135,7 @@ public class MainJFrame extends JFrame {
 		BackgroundMonitor panel_8 = new BackgroundMonitor();
 		tabbedPane.addTab("服务器监听", null, panel_8, null);
 
-		tabbedPane.setSelectedIndex(6);
+		tabbedPane.setSelectedIndex(5);
 
 		tabbedPane.addChangeListener(new ChangeListener() {
 			@Override
@@ -142,11 +144,11 @@ public class MainJFrame extends JFrame {
 				int selectedIndex = tabbedPane.getSelectedIndex();
 				switch (selectedIndex) {
 				case 1:
-					((IntelligentMonitoring) tabbedPane.getComponentAt(1)).refreshBalance();
+					((IntelligentMonitoringControl) tabbedPane.getComponentAt(1)).refreshBalance();
 					break;
-				case 6:
+				case 5:
 					if (YunGouLoginServer.getUserServer().getIsLogin()) {
-						((YunGouLogin) tabbedPane.getComponentAt(6)).refreshBalance();
+						((YunGouLogin) tabbedPane.getComponentAt(5)).refreshBalance();
 					}
 					break;
 				}

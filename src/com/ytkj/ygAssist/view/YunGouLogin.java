@@ -155,18 +155,6 @@ public class YunGouLogin extends JPanel {
 					HttpGetUtil.openBrowseURL(Config.yunGouRegisterUrl);
 				} else {
 					refreshBalance();
-					// button_1.setText("正在获取余额");
-					// new Thread(new Runnable() {
-					// public void run() {
-					// try {
-					// String balance =
-					// YunGouLoginServer.getUserServer().getUserBalance();
-					// label_4.setText("余额: " + balance);
-					// } catch (Exception e2) {
-					// }
-					// button_1.setText("刷新余额");
-					// }
-					// }).start();
 				}
 			}
 		});

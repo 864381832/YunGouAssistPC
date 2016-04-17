@@ -393,6 +393,10 @@ public class Foreknow extends JPanel {
 					String[] text2 = new String[] { text.split("___")[0], text.split("___")[1], "搜索超时", "搜索超时", "搜索超时",
 							"搜索超时", "搜索超时" };
 					foreknowInterface.setFrameListeningText(text.split("___")[2], text2);
+				}else if (FrameName.equals("isSelect")) {
+					String[] text2 = new String[] { text.split("___")[0], text.split("___")[1], "搜索超时", "正在查询", "正在查询",
+							"正在查询", "正在查询" };
+					foreknowInterface.setFrameListeningText(text.split("___")[2], text2);
 				} else if (FrameName.equals("selectError")) {
 					String[] text2 = new String[] { text.split("___")[0], text.split("___")[1], "搜索异常", "请检查输入商品ID",
 							"或商品期数", "或检查网络", "搜索异常" };

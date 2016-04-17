@@ -11,7 +11,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -23,10 +23,9 @@ import com.ytkj.ygAssist.server.GetGoodsInfo;
 import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
 import com.ytkj.ygAssist.view.Foreknow;
-import com.ytkj.ygAssist.view.IntelligentMonitoring;
 import com.ytkj.ygAssist.view.MainJFrame;
 import com.ytkj.ygAssist.view.NowWinning;
-import com.ytkj.ygAssist.view.TrendChart;
+import com.ytkj.ygAssist.viewControl.IntelligentMonitoringControl;
 
 public class ShowMyMenu {
 	/*
@@ -36,9 +35,12 @@ public class ShowMyMenu {
 		JPopupMenu jPopupMenu = new JPopupMenu();
 		JMenu jMenu = new JMenu("更多");
 		jMenu.setFont(new Font("微软雅黑", Font.PLAIN, 14));
-		ConcurrentHashMap<String, String> goodsMap = CacheData.getGoodsNameCacheDate();
+		// ConcurrentHashMap<String, String> goodsMap =
+		// CacheData.getGoodsNameCacheDate();
 		int index = 0;
-		for (String goodsId : goodsMap.keySet()) {
+		ArrayList<String> goodsMap = CacheData.getGoodsTreeListCacheDate();
+		for (int i = goodsMap.size() - 1; i >= 0; i--) {
+			String goodsId = goodsMap.get(i);
 			String[] gStrings = CacheData.getGoodsInfoCacheDate(goodsId);
 			String goodsName = "0".equals(gStrings[3]) ? gStrings[1] : "(限购)" + gStrings[1];
 			JMenuItem goodsIDMenuItem = new JMenuItem(goodsId + "    " + goodsName);
@@ -48,6 +50,7 @@ public class ShowMyMenu {
 					// System.out.println("选择了商品：" + goodsId + "---" +
 					// goodsMap.get(goodsId));
 					jTextField.setText(goodsId);
+					CacheData.setGoodsTreeListCacheDate(goodsId);
 				}
 			});
 			if (index == 30) {
@@ -67,6 +70,7 @@ public class ShowMyMenu {
 			public void actionPerformed(ActionEvent e) {
 				EditGoodsInfoFrame.startUserLogin();
 			}
+
 		});
 		jPopupMenu.add(goodsIDMenuItem);
 		jPopupMenu.show(jTextField, 0, jTextField.getHeight());
@@ -157,7 +161,7 @@ public class ShowMyMenu {
 			String period, int x, int y) {
 		JPopupMenu jPopupMenu = new JPopupMenu();// 弹出菜单
 		String[] jMenuItemName = new String[] { "复制商品ID   " + goodsID, "复制商品名    " + goodsName, "加入智能监听", "加入提前揭晓",
-				"加入走势分析", "加入马上开奖", "查看云购官网：" + goodsName };
+				"加入马上开奖", "查看云购官网：" + goodsName };
 		JMenuItem[] jMenuItem = new JMenuItem[jMenuItemName.length];
 
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard(); // 获得系统剪贴板
@@ -173,7 +177,7 @@ public class ShowMyMenu {
 						clipboard.setContents(new StringSelection(goodsName), null);
 					} else if (i1 == 2) {
 						// System.out.println("加入智能监控" + goodsID);
-						((IntelligentMonitoring) MainJFrame.getMainJFrame().getTabbedPaneSelected(1))
+						((IntelligentMonitoringControl) MainJFrame.getMainJFrame().getTabbedPaneSelected(1))
 								.setTextFieldContent(goodsID);
 						MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(1);
 					} else if (i1 == 3) {
@@ -183,14 +187,15 @@ public class ShowMyMenu {
 						MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(2);
 					} else if (i1 == 4) {
 						// System.out.println("加入走势分析" + goodsID);
-						((TrendChart) MainJFrame.getMainJFrame().getTabbedPaneSelected(3)).setTextFieldContent(goodsID);
+						// ((TrendChart)
+						// MainJFrame.getMainJFrame().getTabbedPaneSelected(3)).setTextFieldContent(goodsID);
+						// MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(3);
+
+						// System.out.println("加入马上开奖" + goodsID);
+						((NowWinning) MainJFrame.getMainJFrame().getTabbedPaneSelected(3)).setTextFieldContent(goodsID,
+								period);
 						MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(3);
 					} else if (i1 == 5) {
-						// System.out.println("加入马上开奖" + goodsID);
-						((NowWinning) MainJFrame.getMainJFrame().getTabbedPaneSelected(4)).setTextFieldContent(goodsID,
-								period);
-						MainJFrame.getMainJFrame().setTabbedPaneSelectedIndex(4);
-					} else if (i1 == 6) {
 						HttpGetUtil.openBrowseURL("http://www.1yyg.com/products/" + goodsID + ".html");
 					}
 				}

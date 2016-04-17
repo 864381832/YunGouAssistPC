@@ -24,6 +24,7 @@ public class TrendChartServer {
 				return;
 			}
 		} else {
+			CacheData.setGoodsTreeListCacheDate(goodsID);
 			foreknowInterface.setFrameText("setGoodsName", CacheData.getGoodsNameCacheDate(goodsID));
 		}
 		CloseableHttpClient HttpClient = HttpGetUtil.createHttpClient();

@@ -61,7 +61,7 @@ public class GetUserBuyServerBigGoods {
 		String[] text = new String[] { goodsID, codePeriod, codeRNO == null ? "" : codeRNO,
 				userName == null ? "" : userName, "", "", "", codeID };
 		foreknowJInterface.setFrameListeningText(selectIndex, text);
-		System.out.println("正在查" + goodsID + ":" + codePeriod + ":" + codeRNO);
+//		System.out.println("正在查" + goodsID + ":" + codePeriod + ":" + codeRNO);
 		getCodeNum();
 	}
 

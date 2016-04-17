@@ -1,7 +1,7 @@
 package com.ytkj.ygAssist.tools;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,7 +14,8 @@ public class CacheData {
 	private static ConcurrentHashMap<String, String> goodsNameCacheDate = new ConcurrentHashMap<String, String>();// 缓存商品名称
 	private static ConcurrentHashMap<String, Integer> goodsPriceCacheDate = new ConcurrentHashMap<String, Integer>();// 缓存商品价格
 	private static ConcurrentHashMap<String, String[]> goodsInfoCacheDate = new ConcurrentHashMap<String, String[]>();// 缓存商品信息
-//	private static HashMap<String, String> selectCodeRNOCacheDate = new HashMap<String, String>();// 缓存中奖码
+
+	private static ArrayList<String> goodsTreeListCacheDate = new ArrayList<String>();// 排序缓存商品信息
 
 	private static ConcurrentHashMap<String, TreeMap<String, String[]>> userBuyListCacheDate = new ConcurrentHashMap<String, TreeMap<String, String[]>>();
 
@@ -60,6 +61,7 @@ public class CacheData {
 
 	public static void setGoodsNameCacheDate(String goodsID, String goodsName) {
 		goodsNameCacheDate.put(goodsID, goodsName);
+		setGoodsTreeListCacheDate(goodsID);
 	}
 
 	public static Integer getGoodsPriceCacheDate(String goodsID) {
@@ -131,11 +133,13 @@ public class CacheData {
 		userBuyListCacheDate.remove(codeID);
 	}
 
-//	public static String getSelectCodeRNOCacheDate(String codeID) {
-//		return selectCodeRNOCacheDate.get(codeID);
-//	}
-//
-//	public static void setSelectCodeRNOCacheDate(String codeID, String codeRNO) {
-//		selectCodeRNOCacheDate.put(codeID, codeRNO);
-//	}
+	public static ArrayList<String> getGoodsTreeListCacheDate() {
+		return goodsTreeListCacheDate;
+	}
+
+	public static void setGoodsTreeListCacheDate(String goodsCacheDate) {
+		CacheData.goodsTreeListCacheDate.remove(goodsCacheDate);
+		CacheData.goodsTreeListCacheDate.add(goodsCacheDate);
+	}
+
 }

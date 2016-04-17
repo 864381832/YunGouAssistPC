@@ -15,8 +15,8 @@ import com.ytkj.ygAssist.server.SelectAssistPublishs;
 import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
 import com.ytkj.ygAssist.tools.JFrameListeningInterface;
-import com.ytkj.ygAssist.view.IntelligentMonitoring;
 import com.ytkj.ygAssist.view.MainJFrame;
+import com.ytkj.ygAssist.viewControl.IntelligentMonitoringControl;
 
 /*
  * 云购监控服务
@@ -51,6 +51,7 @@ public class IntelligentMonitoringServer {
 				return;
 			}
 		} else {
+			CacheData.setGoodsTreeListCacheDate(goodsID);
 			foreknowInterface.setFrameText("setGoodsName", CacheData.getGoodsNameCacheDate(goodsID));
 		}
 		this.EIdx = EIdx;
@@ -179,8 +180,8 @@ public class IntelligentMonitoringServer {
 		timerZeroize.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				IntelligentMonitoring intelligentMonitoring = (IntelligentMonitoring) MainJFrame.getMainJFrame()
-						.getTabbedPaneSelected(1);
+				IntelligentMonitoringControl intelligentMonitoring = (IntelligentMonitoringControl) MainJFrame
+						.getMainJFrame().getTabbedPaneSelected(1);
 				ArrayList<String> values = intelligentMonitoring.getNotData();
 				for (String period : values) {
 					System.out.println("检测到为零" + period);

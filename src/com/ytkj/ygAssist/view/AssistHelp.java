@@ -31,6 +31,8 @@ import java.awt.event.ActionEvent;
  */
 public class AssistHelp extends JPanel {
 	private static final long serialVersionUID = 1L;
+	public JButton button_7;
+	private JButton button_8;
 
 	public AssistHelp() {
 		setLayout(null);
@@ -402,7 +404,7 @@ public class AssistHelp extends JPanel {
 		});
 		panel_3.add(button_6);
 
-		JButton button_7 = new JButton("推广邀请");
+		button_7 = new JButton("推广邀请");
 		button_7.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		button_7.addMouseListener(new MouseAdapter() {
 			@Override
@@ -423,7 +425,7 @@ public class AssistHelp extends JPanel {
 		button_7.setBounds(17, 196, 102, 28);
 		panel_3.add(button_7);
 
-		JButton button_8 = new JButton("我的邀请记录");
+		button_8 = new JButton("我的邀请记录");
 		button_8.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		button_8.addMouseListener(new MouseAdapter() {
 			@Override
