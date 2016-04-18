@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
 import com.ytkj.ygAssist.tools.JFrameListeningInterface;
+import com.ytkj.ygAssist.tools.MyLog;
 import com.ytkj.ygAssist.tools.YungouDataTools;
 
 public class GetUserBuyServer {
@@ -46,6 +47,10 @@ public class GetUserBuyServer {
 			getUserBuyServer.isSelect = true;
 		}
 		return getUserBuyServer;
+	}
+
+	public static HashMap<String, GetUserBuyServer> getStartThread() {
+		return startThread;
 	}
 
 	public GetUserBuyServer(JFrameListeningInterface foreknowJInterface, String selectIndex) {
@@ -94,7 +99,7 @@ public class GetUserBuyServer {
 		// System.out.println("正在查" + goodsID + ":" + codePeriod + ":" +
 		// codeRNO);
 		if (isSelect) {
-			System.out.println("正在查");
+			MyLog.outLog("正在查", goodsID, codePeriod);
 			return;
 		}
 		getCodeNum();
@@ -109,19 +114,20 @@ public class GetUserBuyServer {
 			userBuyListCount = getUserBuyListCount(content);
 			if (isFind) {
 				if (CacheData.getGoodsPriceCacheDate(goodsID) > 8000) {
-//					new Timer().schedule(new TimerTask() {
-//						@Override
-//						public void run() {
-//							new GetUserBuyServerBigGoods(new JFrameListeningInterface() {
-//							}, "0").GetGoodsPeriodInfo(goodsID, codePeriod, codeID);
-//						}
-//					}, goodsKeyUserWeb == null ? 31000 : 10);
-//					isFind = false;
+					// new Timer().schedule(new TimerTask() {
+					// @Override
+					// public void run() {
+					// new GetUserBuyServerBigGoods(new
+					// JFrameListeningInterface() {
+					// }, "0").GetGoodsPeriodInfo(goodsID, codePeriod, codeID);
+					// }
+					// }, goodsKeyUserWeb == null ? 31000 : 10);
+					// isFind = false;
 					foreknowJInterface.setFrameText("isSelect",
 							goodsID + "___" + codePeriod + "___" + selectIndex + "___" + codeID);
-//					return;
+					// return;
 				}
-				for (int i = 11; i < userBuyListCount; i += 10) {
+				for (int i = 11; i <= userBuyListCount; i += 10) {
 					getBarcodeInfo();
 					if (userBuyListCount != CacheData.getUserBuyListCacheDate(codeID).size()) {
 						getUserBuyList(i);
@@ -130,12 +136,13 @@ public class GetUserBuyServer {
 			}
 		} catch (Exception e) {
 			selectNum++;
-			// System.out.println("错误了" + selectNum);
+			MyLog.outLog("获取中奖位置错误了", goodsID, codePeriod, "次数", selectNum);
 			if (selectNum < 10) {
 				index = 0;
 				if (CacheData.getSelectCacheDate(goodsID, codePeriod) == null) {
 					getCodeNum();
 				} else {
+					startThread.remove(codeID + selectType);
 					foreknowJInterface.setFrameListeningText(selectIndex,
 							CacheData.getSelectCacheDate(goodsID, codePeriod));
 				}
@@ -156,10 +163,12 @@ public class GetUserBuyServer {
 		if (CacheData.getSelectCacheDate(goodsID, codePeriod) == null) {
 			if (isFind) {
 				content = GetGoodsInfo.getUserBuyListEnd(codeID, FIdx, HttpClient);
-				// System.out.println("查询到"+content);
+				MyLog.outLog("查询到参与记录", goodsID, codePeriod, content);
 				formatData(content, FIdx);
+
 			}
 		} else {
+			startThread.remove(codeID + selectType);
 			foreknowJInterface.setFrameListeningText(selectIndex, CacheData.getSelectCacheDate(goodsID, codePeriod));
 			isFind = false;
 		}
@@ -175,14 +184,15 @@ public class GetUserBuyServer {
 			data = content.split("Rows\":", 2)[1];
 			data = data.substring(0, data.length() - 5);
 		} catch (Exception e) {
+			MyLog.outLog("获取参与记录错误了", goodsID, codePeriod, "次数", selectNum);
 			SelectAssistPublishs.getYungouPublishs(goodsID, codePeriod, "1");
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 			selectNum++;
-			if (selectNum < 10) {
+			if (selectNum < 20) {
 				getUserBuyList(FIdx);
 			} else {
 				isFind = false;
@@ -234,9 +244,23 @@ public class GetUserBuyServer {
 			if (YungouDataTools.selectBarcodernoInfoByCache(goodsID, codePeriod, codeID, codeRNO, 0)) {
 				if (CacheData.getSelectCacheDate(goodsID, codePeriod) != null) {
 					isFind = false;
+					startThread.remove(codeID + selectType);
 					foreknowJInterface.setFrameListeningText(selectIndex,
 							CacheData.getSelectCacheDate(goodsID, codePeriod));
 				}
+			}
+		}
+		if (FIdx > 21) {
+			try {
+				if (CacheData.getGoodsPriceCacheDate(goodsID) > 8000) {
+					Thread.sleep(3000);
+				} else if (CacheData.getGoodsPriceCacheDate(goodsID) > 5000) {
+					Thread.sleep(1000);
+				} else if (CacheData.getGoodsPriceCacheDate(goodsID) > 2000) {
+					Thread.sleep(500);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -258,6 +282,7 @@ public class GetUserBuyServer {
 			String content = GetGoodsInfo.getUserBuyCode(codeID, buyIP);
 			return sortBuyCode(content);
 		} catch (Exception e) {
+			MyLog.outLog("获取用户云够码错误了", goodsID, codePeriod, "次数", selectNum);
 			SelectAssistPublishs.getYungouPublishs(goodsID, codePeriod, "1");
 			if (selectNum < 10) {
 				selectNum++;
@@ -363,6 +388,7 @@ public class GetUserBuyServer {
 						if (YungouDataTools.selectBarcodernoInfoByCache(goodsID, codePeriod, codeID, codeRNO, isAll)) {
 							if (CacheData.getSelectCacheDate(goodsID, codePeriod) != null) {
 								isFind = false;
+								startThread.remove(codeID + selectType);
 								foreknowJInterface.setFrameListeningText(selectIndex,
 										CacheData.getSelectCacheDate(goodsID, codePeriod));
 							}
@@ -370,6 +396,7 @@ public class GetUserBuyServer {
 						// System.out.println("中奖码" + goodsID + ":" + codePeriod
 						// + ":" + codeRNO);
 					} else {
+						MyLog.outLog("查询中奖码错误了", goodsID, codePeriod);
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
@@ -402,6 +429,7 @@ public class GetUserBuyServer {
 				}
 				// System.out.println("查询中奖码：" + codeRNO);
 			} catch (Exception e) {
+				MyLog.outLog("获取中奖信息错误了", goodsID, codePeriod);
 			}
 			if (goodsKeyUserWeb != null) {
 				String[] text = new String[] { goodsID, codePeriod, codeRNO, userName, "", "", "", codeID };
@@ -411,6 +439,7 @@ public class GetUserBuyServer {
 					if (YungouDataTools.selectBarcodernoInfoByCache(goodsID, codePeriod, codeID, codeRNO, isAll)) {
 						if (CacheData.getSelectCacheDate(goodsID, codePeriod) != null) {
 							isFind = false;
+							startThread.remove(codeID + selectType);
 							foreknowJInterface.setFrameListeningText(selectIndex,
 									CacheData.getSelectCacheDate(goodsID, codePeriod));
 						}

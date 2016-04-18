@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.ytkj.ygAssist.server.GetGoodsInfo;
+import com.ytkj.ygAssist.server.GetUserBuyServer;
 import com.ytkj.ygAssist.server.SelectAssistPublishs;
 
 public class YungouDataTools {
@@ -86,8 +87,8 @@ public class YungouDataTools {
 								SelectAssistPublishs.uploadYungouPublishs(text);
 								CacheData.removeUserBuyListCacheDate(codeID);
 							}
-							System.out.println("查到seCache了：" + selectNum + ":" + goodsID + ":" + codePeriod + ":"
-									+ codeRNO + ":" + buyListMap.get(key)[1] + ":" + buyPosition);
+							MyLog.outLog("查到seCache了", selectNum, goodsID, codePeriod, codeRNO, buyListMap.get(key)[1],
+									buyPosition);
 							return true;
 						}
 						index++;

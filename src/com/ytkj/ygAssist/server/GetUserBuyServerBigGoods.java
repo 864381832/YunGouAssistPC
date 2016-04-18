@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
 import com.ytkj.ygAssist.tools.JFrameListeningInterface;
+import com.ytkj.ygAssist.tools.MyLog;
 import com.ytkj.ygAssist.tools.YungouDataTools;
 
 public class GetUserBuyServerBigGoods {
@@ -61,7 +62,8 @@ public class GetUserBuyServerBigGoods {
 		String[] text = new String[] { goodsID, codePeriod, codeRNO == null ? "" : codeRNO,
 				userName == null ? "" : userName, "", "", "", codeID };
 		foreknowJInterface.setFrameListeningText(selectIndex, text);
-//		System.out.println("正在查" + goodsID + ":" + codePeriod + ":" + codeRNO);
+		// System.out.println("正在查" + goodsID + ":" + codePeriod + ":" +
+		// codeRNO);
 		getCodeNum();
 	}
 
@@ -73,7 +75,7 @@ public class GetUserBuyServerBigGoods {
 			String content = getUserBuyList(1);
 			userBuyListCount = getUserBuyListCount(content);
 			if (isFind) {
-				for (int i = 11; i < userBuyListCount; i += 10) {
+				for (int i = 11; i <= userBuyListCount; i += 10) {
 					try {
 						Thread.sleep(3000);
 					} catch (Exception e) {
@@ -86,7 +88,7 @@ public class GetUserBuyServerBigGoods {
 			}
 		} catch (Exception e) {
 			selectNum++;
-			// System.out.println("错误了" + selectNum);
+			MyLog.outLog("大件获取中奖位置错误了", goodsID, codePeriod, "次数", selectNum);
 			if (selectNum < 10) {
 				index = 0;
 				if (CacheData.getSelectCacheDate(goodsID, codePeriod) == null) {
@@ -111,6 +113,7 @@ public class GetUserBuyServerBigGoods {
 		if (CacheData.getSelectCacheDate(goodsID, codePeriod) == null) {
 			if (isFind) {
 				content = GetGoodsInfo.getUserBuyListEnd(codeID, FIdx, HttpClient);
+				MyLog.outLog("大件查询到参与记录", goodsID, codePeriod,content);
 				formatData(content, FIdx);
 			}
 		} else {
@@ -129,9 +132,10 @@ public class GetUserBuyServerBigGoods {
 			data = content.split("Rows\":", 2)[1];
 			data = data.substring(0, data.length() - 5);
 		} catch (Exception e) {
+			MyLog.outLog("大件获取参与记录错误了", goodsID, codePeriod, "次数", selectNum);
 			SelectAssistPublishs.getYungouPublishs(goodsID, codePeriod, "1");
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -301,8 +305,7 @@ public class GetUserBuyServerBigGoods {
 							foreknowJInterface.setFrameListeningText(selectIndex, text);
 							Integer isAll = userBuyListCount == CacheData.getUserBuyListCacheDate(codeID).size() ? 0
 									: index;
-							if (YungouDataTools.selectBarcodernoInfoByCache(goodsID, codePeriod, codeID, codeRNO,
-									isAll)) {
+							if (YungouDataTools.selectBarcodernoInfoByCache(goodsID, codePeriod, codeID, codeRNO, isAll)) {
 								if (CacheData.getSelectCacheDate(goodsID, codePeriod) != null) {
 									isFind = false;
 									foreknowJInterface.setFrameListeningText(selectIndex,

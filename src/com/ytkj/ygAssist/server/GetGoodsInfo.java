@@ -200,7 +200,7 @@ public class GetGoodsInfo {
 		getUrl.append("http://api.1yyg.com/JPData?action=GetUserBuyListByCodeEnd&codeID=").append(codeID);
 		getUrl.append("&FIdx=").append(FIdx);
 		getUrl.append("&EIdx=").append(FIdx + 9);
-		getUrl.append("&isCount=1");
+		getUrl.append("&isCount=0");
 		String refererUrl = "http://www.1yyg.com/lottery/" + codeID + ".html";
 		return HttpGetUtil.getHttpData(getUrl.toString(), refererUrl, HttpClient);
 	}

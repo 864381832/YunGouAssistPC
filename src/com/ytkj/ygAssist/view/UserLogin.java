@@ -424,7 +424,7 @@ public class UserLogin extends JFrame {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-//				HintDialog.startExpiringHint(AssistServer.getCommonality().replace("__", "\r\n"));
+				HintDialog.startExpiringHint(AssistServer.getCommonality().replace("__", "\r\n"));
 			}
 		}, 2000);
 	}

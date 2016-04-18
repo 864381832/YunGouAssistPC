@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
@@ -13,6 +15,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
+import com.ytkj.ygAssist.tools.JFrameListeningInterface;
+import com.ytkj.ygAssist.tools.MyLog;
 
 public class GetUserBuyMonitorServer {
 	private Timer timer = null;
@@ -31,12 +35,17 @@ public class GetUserBuyMonitorServer {
 	});
 
 	public static GetUserBuyMonitorServer selectBarcodernoInfo(String goodsID, String codePeriod, String codeID) {
-		// if (CacheData.getGoodsPriceCacheDate(goodsID) > 300) {
+		if (getUserBuyMonitorServerMap.size() > 2) {
+			for (GetUserBuyMonitorServer key : getUserBuyMonitorServerMap.values()) {
+				MyLog.outLog("移除了提前监听", key.goodsID, "code", key.codeID);
+				key.timer.cancel();
+			}
+			getUserBuyMonitorServerMap.clear();
+		}
 		if (getUserBuyMonitorServerMap.get(codeID) == null) {
 			GetUserBuyMonitorServer getUserBuyMonitorServer = new GetUserBuyMonitorServer(goodsID, codePeriod, codeID);
 			getUserBuyMonitorServerMap.put(codeID, getUserBuyMonitorServer);
 		}
-		// }
 		return getUserBuyMonitorServerMap.get(codeID);
 	}
 
@@ -52,7 +61,7 @@ public class GetUserBuyMonitorServer {
 		this.goodsID = goodsID;
 		this.codePeriod = codePeriod;
 		this.codeID = codeID;
-		// getCodeNum();
+		MyLog.outLog("开始提前监", goodsID, codePeriod, codeID);
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -67,21 +76,30 @@ public class GetUserBuyMonitorServer {
 							getCodeNum();
 						}
 					} else {
-						System.out.println("取消" + goodsID + ":" + codePeriod);
-						// new Thread(new Runnable() {
-						// public void run() {
-						// String string =
-						// GetGoodsInfo.getUserBuyListEnd(codeID, 1,
-						// HttpClient);
-						// formatData(string, 1);
-						// HttpGetUtil.CloseHttpClient(HttpClient);
-						// System.out.println("总价格" +
-						// YungouDataTools.getCodeNum(codeID));
-						// System.out.println("总大小" +
-						// CacheData.getUserBuyListCacheDate(codeID).size());
-						// System.out.println("缓存大小" + userBuyListMap.size());
-						// }
-						// }).start();
+						MyLog.outLog("取消提前监听", goodsID, codePeriod);
+						new Thread(new Runnable() {
+							public void run() {
+								// String string =
+								// GetGoodsInfo.getUserBuyListEnd(codeID, 1,
+								// HttpClient);
+								// formatData(string, 1);
+								// HttpGetUtil.CloseHttpClient(HttpClient);
+								// System.out.println("总价格" +
+								// YungouDataTools.getCodeNum(codeID));
+								// System.out.println("总大小" +
+								// CacheData.getUserBuyListCacheDate(codeID).size());
+								// System.out.println("缓存大小" +
+								// userBuyListMap.size());
+								try {
+									Thread.sleep(4000);
+									MyLog.outLog("提前查询", goodsID, codePeriod);
+									GetUserBuyServer.getUserBuyServer(new JFrameListeningInterface() {
+									}, "3", codePeriod, 1).GetGoodsPeriodInfo(goodsID, codePeriod, codeID, false);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}).start();
 						timer.cancel();
 						getUserBuyMonitorServerMap.remove(codeID);
 					}
@@ -141,8 +159,7 @@ public class GetUserBuyMonitorServer {
 			}
 			getUserBuyList(FIdx + 10);
 		}
-		System.out.println("大小" + goodsID + ":" + codePeriod + ":" + listCount + ":"
-				+ CacheData.getUserBuyListCacheDate(codeID).size());
+		MyLog.outLog("提前监听到", goodsID, codePeriod, listCount, CacheData.getUserBuyListCacheDate(codeID).size());
 	}
 
 	/*

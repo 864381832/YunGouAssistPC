@@ -14,7 +14,7 @@ import com.ytkj.ygAssist.tools.JFrameListeningInterface;
  */
 public class ForeknowServer {
 	public static void getForeknow(String goodsID, String period, String EIdx,
-			JFrameListeningInterface foreknowInterface,int selectType) {
+			JFrameListeningInterface foreknowInterface, int selectType) {
 		if (CacheData.getGoodsNameCacheDate(goodsID) == null) {
 			if (GetGoodsInfo.getGoodsInfoByGoodsID(goodsID)) {
 				foreknowInterface.setFrameText("setGoodsName", CacheData.getGoodsNameCacheDate(goodsID));
@@ -57,28 +57,34 @@ public class ForeknowServer {
 		} else {
 			boolean isHavaData = true;
 			String text[] = GetGoodsInfo.shopCartNew(CacheData.getGoodsInfoCacheDate(goodsID)[2],
-					HttpGetUtil.createHttpClient());
+					HttpGetUtil.getHttpClient());
 			try {
 				int newestPeriod = Integer.parseInt(text[1]);
-				for (int i = 1; i < Integer.parseInt(EIdx); i++) {
-					if (CacheData.getSelectCacheDate(goodsID, "" + (newestPeriod - i)) == null) {
+				for (int i = 1; i < Integer.parseInt(EIdx) && i < newestPeriod; i++) {
+					if (CacheData.getSelectCacheDate(goodsID, Integer.toString(newestPeriod - i)) == null) {
 						isHavaData = false;
 					} else {
-						foreknowInterface.setFrameListeningText("" + i,
-								CacheData.getSelectCacheDate(goodsID, "" + (newestPeriod - i)));
+						foreknowInterface.setFrameListeningText(Integer.toString(i),
+								CacheData.getSelectCacheDate(goodsID, Integer.toString(newestPeriod - i)));
 					}
 				}
 				CacheData.setGoodsPriceCacheDate(goodsID, Integer.parseInt(text[3]));
 			} catch (Exception e) {
 			}
+			int price = Integer.parseInt(text[3]);
+			CacheData.setGoodsPriceCacheDate(goodsID, price);
 			if (!isHavaData) {
 				SelectAssistPublishs.getYungouPublishs(goodsID, "0", EIdx);
 				List<Map<String, String>> contentList = GetGoodsInfo.getBarcodeRaffListByGoodsID(goodsID, EIdx);
 				if (contentList != null) {
-					for (int selectIndex = 0; selectIndex < contentList.size(); selectIndex++) {
-						int selectIndex1 = selectIndex;
-						Map<String, String> map = contentList.get(selectIndex);
+					// for (int selectIndex = 0; selectIndex <
+					// contentList.size(); selectIndex++) {
+					// int selectIndex1 = selectIndex;
+					// Map<String, String> map = contentList.get(selectIndex);
+					int selectIndex = 0;
+					for (Map<String, String> map : contentList) {
 						if (CacheData.getSelectCacheDate(goodsID, map.get("codePeriod")) == null) {
+							int selectIndex1 = selectIndex;
 							Thread thread = new Thread(new Runnable() {
 								public void run() {
 									if (map.get("codeState").equals("1")) {
@@ -92,7 +98,8 @@ public class ForeknowServer {
 															map.get("codePeriod"), map.get("codeID"), false);
 										} else {
 											GetUserBuyServer getUserBuyServer = GetUserBuyServer.getUserBuyServer(
-													foreknowInterface, "" + selectIndex1, map.get("codeID"), selectType);
+													foreknowInterface, "" + selectIndex1, map.get("codeID"),
+													selectType);
 											getUserBuyServer.setBarcodernoInfo(map.get("codeRNO"), map.get("userName"),
 													map.get("userWeb"));
 											getUserBuyServer.GetGoodsPeriodInfo(goodsID, map.get("codePeriod"),
@@ -106,6 +113,7 @@ public class ForeknowServer {
 							foreknowInterface.setFrameListeningText("" + selectIndex,
 									CacheData.getSelectCacheDate(goodsID, map.get("codePeriod")));
 						}
+						selectIndex++;
 					}
 				} else {
 					foreknowInterface.setFrameText("goodsoldOut", null);

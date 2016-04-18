@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
 import com.ytkj.ygAssist.tools.JFrameListeningInterface;
+import com.ytkj.ygAssist.tools.MyLog;
 import com.ytkj.ygAssist.tools.YungouDataTools;
 
 public class BackgroundMonitorServer {
@@ -28,23 +31,98 @@ public class BackgroundMonitorServer {
 			public void run() {
 				while (true) {
 					try {
-						Thread.sleep(10000);
-						Object[] objects = GetGoodsInfo.getStartRaffleAllList("0");
-						List<Map<String, String>> dList = (List<Map<String, String>>) objects[1];
-						for (int i = dList.size() - 1; i >= 0; i--) {
-							Map<String, String> map = dList.get(i);
-							int price = Integer.parseInt(map.get("codeQuantity"));
-							String goodsID = YungouDataTools.getGoodsID(map.get("goodsSName"), map.get("codeType"));
-							CacheData.setGoodsPriceCacheDate(goodsID, price);
-							selectZeroize(goodsID, map.get("period"), price, new JFrameListeningInterface() {
-							}, true);
-							Thread.sleep(3 * 60 * 1000);
+						Thread.sleep(3000);
+						MyLog.outLog("后台检测线程大小", GetUserBuyServer.getStartThread());
+						if (GetUserBuyServer.getStartThread().size() == 0) {
+							boolean isAllSelect = true;
+							ArrayList<String> goodsMap = CacheData.getGoodsTreeListCacheDate();
+							for (int i = goodsMap.size() - 1; i >= 0; i--) {
+								if (GetUserBuyServer.getStartThread().size() == 0) {
+									String goodsId = goodsMap.get(i);
+									boolean isSelect = selectGoodsInfo(goodsId);
+									if (isSelect) {
+										isAllSelect = false;
+									}
+									Thread.sleep(5 * 1000);
+								}
+							}
+							if (isAllSelect) {
+								Object[] objects = GetGoodsInfo.getStartRaffleAllList("0");
+								List<Map<String, String>> dList = (List<Map<String, String>>) objects[1];
+								for (int i = dList.size() - 1; i >= 0; i--) {
+									Map<String, String> map = dList.get(i);
+									int price = Integer.parseInt(map.get("codeQuantity"));
+									String goodsID = YungouDataTools.getGoodsID(map.get("goodsSName"),
+											map.get("codeType"));
+									CacheData.setGoodsPriceCacheDate(goodsID, price);
+									selectZeroize(goodsID, map.get("period"), price, new JFrameListeningInterface() {
+									}, true);
+									Thread.sleep(2 * 60 * 1000);
+								}
+							}
 						}
 					} catch (Exception e) {
 					}
 				}
 			}
 		}).start();
+	}
+
+	/*
+	 * 用户监听最近查询商品补零
+	 */
+	private boolean selectGoodsInfo(String goodsID) {
+		boolean isHavaData = false;
+		String text[] = GetGoodsInfo.shopCartNew(CacheData.getGoodsInfoCacheDate(goodsID)[2],
+				HttpGetUtil.getHttpClient());
+		try {
+			int newestPeriod = Integer.parseInt(text[1]);
+			for (int i = 1; i < 50 && i < newestPeriod; i++) {
+				if (CacheData.getSelectCacheDate(goodsID, Integer.toString(newestPeriod - i)) == null) {
+					isHavaData = true;
+					break;
+				}
+			}
+			CacheData.setGoodsPriceCacheDate(goodsID, Integer.parseInt(text[3]));
+		} catch (Exception e) {
+		}
+		if (isHavaData) {
+			SelectAssistPublishs.getYungouPublishs(goodsID, "0", "50");
+			List<Map<String, String>> contentList = GetGoodsInfo.getBarcodeRaffListByGoodsID(goodsID, "50");
+			if (contentList != null) {
+				try {
+					for (Map<String, String> map : contentList) {
+						if (CacheData.getSelectCacheDate(goodsID, map.get("codePeriod")) == null) {
+							if (!map.get("codeState").equals("1")) {
+								String codeID = map.get("codeID");
+								if (GetUserBuyServer.getStartThread().size() == 0) {
+									if (map.get("codeRNO").equals("")) {
+										int price = Integer.parseInt(map.get("codeQuantity"));
+										CacheData.setGoodsPriceCacheDate(goodsID, price);
+										new GetUserBuyServer(new JFrameListeningInterface() {
+										}, "0").GetGoodsPeriodInfo(goodsID, map.get("codePeriod"), codeID, false);
+										MyLog.outLog("用户监听正在后台查", goodsID, map.get("codePeriod"));
+										Thread.sleep(5000);
+									} else {
+										GetUserBuyServer getUserBuyServer = new GetUserBuyServer(
+												new JFrameListeningInterface() {
+												}, "0");
+										getUserBuyServer.setBarcodernoInfo(map.get("codeRNO"), map.get("userName"),
+												map.get("userWeb"));
+										getUserBuyServer.GetGoodsPeriodInfo(goodsID, map.get("codePeriod"), codeID,
+												false);
+										System.out.println("正在后台查" + goodsID + ":" + map.get("codePeriod"));
+										Thread.sleep(5000);
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception e) {
+				}
+			}
+		}
+		return isHavaData;
 	}
 
 	/*

@@ -131,6 +131,7 @@ public class EditGoodsInfoFrame extends JDialog {
 					DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 					String goodsID = (String) tableModel.getValueAt(table.getSelectedRow(), 0);
 					CacheData.getGoodsNameCacheDate().remove(goodsID);
+					CacheData.getGoodsTreeListCacheDate().remove(goodsID);
 					tableModel.removeRow(table.getSelectedRow());
 				}
 			}

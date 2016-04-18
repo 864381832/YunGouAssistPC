@@ -15,6 +15,7 @@ import com.ytkj.ygAssist.server.SelectAssistPublishs;
 import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.CacheData;
 import com.ytkj.ygAssist.tools.JFrameListeningInterface;
+import com.ytkj.ygAssist.tools.MyLog;
 import com.ytkj.ygAssist.view.MainJFrame;
 import com.ytkj.ygAssist.viewControl.IntelligentMonitoringControl;
 
@@ -76,7 +77,7 @@ public class IntelligentMonitoringServer {
 		boolean isHavaData = true;
 		try {
 			int newPeriod = Integer.parseInt(newestPeriod);
-			for (int i = 1; i < Integer.parseInt(EIdx); i++) {
+			for (int i = 1; i < Integer.parseInt(EIdx) && i < newPeriod; i++) {
 				if (CacheData.getSelectCacheDate(goodsID, "" + (newPeriod - i)) == null) {
 					isHavaData = false;
 				} else {
@@ -203,7 +204,7 @@ public class IntelligentMonitoringServer {
 					}
 				}
 			}
-		}, 10000, 5000);
+		}, 6000, 5000);
 	}
 
 	public void stopRemindServer() {

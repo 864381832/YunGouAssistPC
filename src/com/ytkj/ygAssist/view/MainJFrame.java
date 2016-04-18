@@ -16,7 +16,6 @@ import com.ytkj.ygAssist.server.util.HttpGetUtil;
 import com.ytkj.ygAssist.tools.Config;
 import com.ytkj.ygAssist.tools.JFrameListeningInterface;
 import com.ytkj.ygAssist.tools.ViewTools;
-import com.ytkj.ygAssist.view.myView.BackgroundMonitor;
 import com.ytkj.ygAssist.view.myView.HintDialog;
 import com.ytkj.ygAssist.view.myView.ShowMyMenu;
 import com.ytkj.ygAssist.viewControl.IntelligentMonitoringControl;
@@ -52,9 +51,9 @@ public class MainJFrame extends JFrame {
 		// 获取屏幕大小
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation((screenSize.width - frame.getWidth()) / 2, (screenSize.height - frame.getHeight()) / 3);
-		// if (Config.isBackgroundMonitorServer) {
-		// BackgroundMonitorServer.getBackgroundMonitor().startServer();
-		// }
+		if (Config.isBackgroundMonitorServer) {
+			BackgroundMonitorServer.getBackgroundMonitor().startServer();
+		}
 	}
 
 	public static MainJFrame getMainJFrame() {
@@ -132,8 +131,8 @@ public class MainJFrame extends JFrame {
 		tabbedPane.addTab(null, new ImageIcon(UserLogin.class.getResource("/images/mainJFrame/znyc.png")), panel_9,
 				null);
 
-		BackgroundMonitor panel_8 = new BackgroundMonitor();
-		tabbedPane.addTab("服务器监听", null, panel_8, null);
+//		BackgroundMonitor panel_8 = new BackgroundMonitor();
+//		tabbedPane.addTab("服务器监听", null, panel_8, null);
 
 		tabbedPane.setSelectedIndex(5);
 

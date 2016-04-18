@@ -7,8 +7,8 @@ public class Config {
 	public static final String yunGouAssistUrl = "http://znyg.yuntengkeji.cn";// 助手登录地址
 //	public static final String yunGouAssistUrl = "http://localhost/YunGouAssist";// 助手登录地址
 
-	public static final String yunGouAssistVersions = "V1.6.3";// 云购助手版本信息
-	public static final int yunGouAssistVersionsInteger = 6;// 云购助手版本更新信息
+	public static final String yunGouAssistVersions = "V1.6.5";// 云购助手版本信息
+	public static final int yunGouAssistVersionsInteger = 7;// 云购助手版本更新信息
 	/*
 	 * 代理 博远boyuan 阿宾abin 小牛合资群xiaoniu 于果yuguo 霍树强huoshuqiang
 	 */

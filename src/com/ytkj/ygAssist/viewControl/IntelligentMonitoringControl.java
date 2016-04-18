@@ -18,6 +18,8 @@ import com.ytkj.ygAssist.view.myView.ShowMyMenu;
 public class IntelligentMonitoringControl extends IntelligentMonitoring {
 	private static final long serialVersionUID = 1L;
 
+	private int progressBarValue = 0;
+
 	public IntelligentMonitoringControl() {
 		super();
 		addButtonMouseListener();
@@ -139,9 +141,9 @@ public class IntelligentMonitoringControl extends IntelligentMonitoring {
 					progressBar.setValue(Integer.parseInt(text[2]));
 					label_2.setText(text[2]);
 					label_6.setText(text[4]);
+					progressBarValue = progressBarValue == 100 ? 0 : progressBarValue + 50;
+					progressBar_1.setValue(progressBarValue);
 					listeningAutoBuy(text[2]);
-					int val = progressBar_1.getValue() == 100 ? 0 : progressBar_1.getValue() + 50;
-					progressBar_1.setValue(val);
 				} else if (FrameName.equals("3")) {
 					if (text[0].equals(textField.getText().trim()) && startMonitorButton.getText().equals("停止监控")) {
 						if (!text[5].equals("")) {

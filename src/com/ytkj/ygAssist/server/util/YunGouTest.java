@@ -57,8 +57,7 @@ public class YunGouTest {
 		// System.out.println(GetHistoryBuyRecord.getCodeRNO("2016-04-15
 		// 00:47:41.067", "5188"));
 		// TestUrl();
-		System.out.println(new Date().getTime());
-		System.out.println(System.currentTimeMillis());
+		GetGoodsInfo.getBarcodeRaffListByGoodsID("22504", "50");
 		System.out.println("执行耗时 : " + (System.currentTimeMillis() - beginTime) / 1000f + " 秒 ");
 	}
 

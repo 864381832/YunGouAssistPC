@@ -80,6 +80,13 @@ public class HttpGetUtil {
 		return HttpClients.createDefault();
 	}
 
+	public static CloseableHttpClient getHttpClient() {
+		if (HttpClient == null) {
+			HttpClient = HttpClients.createDefault();
+		}
+		return HttpClient;
+	}
+
 	public static void CloseHttpClient() {
 		try {
 			HttpClient.close();
