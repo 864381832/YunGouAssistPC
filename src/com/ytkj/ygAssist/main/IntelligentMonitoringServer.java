@@ -181,27 +181,30 @@ public class IntelligentMonitoringServer {
 		timerZeroize.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				IntelligentMonitoringControl intelligentMonitoring = (IntelligentMonitoringControl) MainJFrame
-						.getMainJFrame().getTabbedPaneSelected(1);
-				ArrayList<String> values = intelligentMonitoring.getNotData();
-				for (String period : values) {
-					System.out.println("检测到为零" + period);
-					SelectAssistPublishs.getYungouPublishs(goodsID, period, "1");
-					if (CacheData.getSelectCacheDate(goodsID, period) == null) {
-						String[] content = GetGoodsInfo.getGoodsPeriodInfo(goodsID, period);
-						try {
-							if (content[0].equals("2")) {
-								GetUserBuyServer.getUserBuyServer(foreknowInterface, "3", content[1], 1)
-										.GetGoodsPeriodInfo(goodsID, period, content[1], false);
-							} else if (content[0].equals("3")) {
-								GetUserBuyServer.getUserBuyServer(foreknowInterface, "3", content[1], 1)
-										.GetGoodsPeriodInfo(goodsID, period, content[1], true);
+				try {
+					IntelligentMonitoringControl intelligentMonitoring = (IntelligentMonitoringControl) MainJFrame
+							.getMainJFrame().getTabbedPaneSelected(1);
+					ArrayList<String> values = intelligentMonitoring.getNotData();
+					for (String period : values) {
+						System.out.println("检测到为零" + period);
+						SelectAssistPublishs.getYungouPublishs(goodsID, period, "1");
+						if (CacheData.getSelectCacheDate(goodsID, period) == null) {
+							String[] content = GetGoodsInfo.getGoodsPeriodInfo(goodsID, period);
+							try {
+								if (content[0].equals("2")) {
+									GetUserBuyServer.getUserBuyServer(foreknowInterface, "3", content[1], 1)
+											.GetGoodsPeriodInfo(goodsID, period, content[1], false);
+								} else if (content[0].equals("3")) {
+									GetUserBuyServer.getUserBuyServer(foreknowInterface, "3", content[1], 1)
+											.GetGoodsPeriodInfo(goodsID, period, content[1], true);
+								}
+							} catch (Exception e) {
 							}
-						} catch (Exception e) {
+						} else {
+							foreknowInterface.setFrameListeningText("3", CacheData.getSelectCacheDate(goodsID, period));
 						}
-					} else {
-						foreknowInterface.setFrameListeningText("3", CacheData.getSelectCacheDate(goodsID, period));
 					}
+				} catch (Exception e) {
 				}
 			}
 		}, 6000, 5000);
